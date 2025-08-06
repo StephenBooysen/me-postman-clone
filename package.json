@@ -1,0 +1,42 @@
+{
+  "name": "experiment-postman-clone",
+  "version": "1.0.0",
+  "description": "A modern React-based Postman clone for API testing",
+  "homepage": "https://github.com/StephenBooysen/experiment-postman-clone#readme",
+  "bugs": {
+    "url": "https://github.com/StephenBooysen/experiment-postman-clone/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/StephenBooysen/experiment-postman-clone.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.26.0",
+    "axios": "^1.7.0",
+    "lucide-react": "^0.400.0",
+    "tailwindcss": "^3.4.0",
+    "autoprefixer": "^10.4.0",
+    "postcss": "^8.4.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react": "^7.34.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.0",
+    "vite": "^5.3.0"
+  }
+}
