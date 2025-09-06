@@ -6,7 +6,7 @@ const ejs = require('ejs');
 
 
 const app = express();
-const PORT = 3102;
+const PORT = process.env.PORT || 3102;
 const WORKSPACES_DIR = path.join(__dirname, 'workspaces');
 
 // Set EJS as template engine

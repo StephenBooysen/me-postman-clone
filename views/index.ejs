@@ -3,36 +3,255 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
-    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
-    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
-    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-bold-rounded/css/uicons-bold-rounded.css'>
-    <link rel="stylesheet" href="/css/design-system.css">
-    <link rel="stylesheet" href="/css/style.css">
+    <title>Retrieve Product by Barcode - SRX - Strategic Partnerships</title>
+    <link rel="stylesheet" href="/css/postman-clone.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <div id="app" class="flex h-screen bg-background">
-        <!-- Sidebar -->
-        <div class="w-80 bg-card border-r flex flex-col">
-            <%- include('partials/sidebar') %>
-        </div>
-
-        <!-- Main Content -->
-        <div class="flex-1 flex flex-col overflow-hidden">
-            <div id="main-content" class="flex-1 flex items-center justify-center text-muted-foreground">
-                <div class="text-center">
-                    <div class="text-6xl mb-4">
-                        <i class="fi fi-rr-rocket text-primary" style="font-size: 4rem;"></i>
-                    </div>
-                    <h2 class="text-2xl font-semibold mb-2 text-foreground">Welcome to Postman Clone</h2>
-                    <p class="text-muted-foreground">Select or create a request to get started</p>
+    <div class="postman-container">
+        <!-- Top Header -->
+        <header class="top-header">
+            <div class="header-left">
+                <div class="nav-buttons">
+                    <button class="nav-btn"><i class="fas fa-arrow-left"></i></button>
+                    <button class="nav-btn"><i class="fas fa-arrow-right"></i></button>
                 </div>
+                <nav class="header-nav">
+                    <a href="#" class="nav-link active">Home</a>
+                    <a href="#" class="nav-link">Workspaces</a>
+                    <a href="#" class="nav-link">API Network</a>
+                </nav>
             </div>
+            <div class="header-right">
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" placeholder="Search Postman" class="search-input">
+                    <span class="search-shortcut">Ctrl K</span>
+                </div>
+                <button class="invite-btn">Invite</button>
+                <button class="notification-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">1</span>
+                </button>
+                <div class="user-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <button class="upgrade-btn">Upgrade</button>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="workspace-header">
+                    <div class="workspace-info">
+                        <i class="fas fa-briefcase workspace-icon"></i>
+                        <span class="workspace-name">SRX - Strategic Partnerships</span>
+                    </div>
+                    <div class="workspace-actions">
+                        <button class="action-btn">New</button>
+                        <button class="action-btn">Import</button>
+                    </div>
+                </div>
+
+                <div class="sidebar-content">
+                    <div class="sidebar-tabs">
+                        <button class="sidebar-tab active">Overview</button>
+                    </div>
+
+                    <div class="collections-section">
+                        <div class="collections-header">
+                            <i class="fas fa-folder collections-icon"></i>
+                            <span>Collections</span>
+                        </div>
+                        
+                        <div class="collection-tree">
+                            <div class="collection-item">
+                                <i class="fas fa-chevron-down"></i>
+                                <i class="fas fa-folder collection-folder"></i>
+                                <span>Smart Trolley BFF [PROD]</span>
+                            </div>
+                            
+                            <div class="collection-item nested">
+                                <i class="fas fa-chevron-down"></i>
+                                <i class="fas fa-folder collection-folder"></i>
+                                <span>SRX Smart Trolley [PREP]</span>
+                            </div>
+                            
+                            <div class="collection-item nested-2">
+                                <i class="fas fa-folder collection-folder"></i>
+                                <span>Customer</span>
+                            </div>
+                            
+                            <div class="collection-item nested-2">
+                                <i class="fas fa-folder collection-folder"></i>
+                                <span>Spin and Win</span>
+                            </div>
+                            
+                            <div class="collection-item nested-2 expanded">
+                                <i class="fas fa-chevron-down"></i>
+                                <i class="fas fa-folder collection-folder"></i>
+                                <span>Products</span>
+                            </div>
+                            
+                            <div class="collection-item nested-3">
+                                <i class="fas fa-folder collection-folder"></i>
+                                <span>Product Scenarios</span>
+                            </div>
+                            
+                            <div class="request-item active">
+                                <span class="request-method get">GET</span>
+                                <span class="request-name">Retrieve Product by Barcode</span>
+                            </div>
+                            
+                            <div class="request-item">
+                                <span class="request-method get">GET</span>
+                                <span class="request-name">Retrieve Product by Barcode Copy</span>
+                            </div>
+                            
+                            <div class="request-item">
+                                <span class="request-method get">GET</span>
+                                <span class="request-name">Retrieve Product by Product Code</span>
+                            </div>
+                            
+                            <div class="request-item">
+                                <span class="request-method get">GET</span>
+                                <span class="request-name">Retrieve Products by Search Term</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Panel -->
+            <main class="main-panel">
+                <!-- Breadcrumb -->
+                <div class="breadcrumb">
+                    <i class="fas fa-shopping-cart breadcrumb-icon"></i>
+                    <span>SRX Smart Trolley [PREP]</span>
+                    <i class="fas fa-chevron-right"></i>
+                    <span>Products</span>
+                    <i class="fas fa-chevron-right"></i>
+                    <span>Retrieve Product by Barcode</span>
+                </div>
+
+                <!-- Request Tabs -->
+                <div class="request-tabs">
+                    <div class="tab active">
+                        <span class="tab-method get">GET</span>
+                        <span class="tab-name">Retrieve Product by Barcode</span>
+                        <button class="tab-close">×</button>
+                    </div>
+                    <button class="add-tab">+</button>
+                </div>
+
+                <!-- Request Panel -->
+                <div class="request-panel">
+                    <!-- URL Bar -->
+                    <div class="url-bar">
+                        <select class="method-selector">
+                            <option value="GET" selected>GET</option>
+                            <option value="POST">POST</option>
+                            <option value="PUT">PUT</option>
+                            <option value="DELETE">DELETE</option>
+                            <option value="PATCH">PATCH</option>
+                        </select>
+                        <input type="text" class="url-input" placeholder="Enter request URL" 
+                               value="{{baseUrl}}/dsi/brands/checkers/countries/ZA/products/search/full?posName={{storeCode}}&barcode=6009612470014&currentPage=0">
+                        <button class="send-btn">Send</button>
+                    </div>
+
+                    <!-- Request Options -->
+                    <div class="request-options">
+                        <button class="option-tab active">Params</button>
+                        <button class="option-tab">Authorization</button>
+                        <button class="option-tab">Headers <span class="tab-count">(8)</span></button>
+                        <button class="option-tab">Body</button>
+                        <button class="option-tab">Scripts</button>
+                        <button class="option-tab">Settings</button>
+                    </div>
+
+                    <!-- Parameters Section -->
+                    <div class="params-section">
+                        <div class="param-row">
+                            <input type="checkbox" checked>
+                            <input type="text" value="posName" class="param-key" readonly>
+                            <input type="text" value="{{storeCode}}" class="param-value">
+                            <span class="param-description"></span>
+                        </div>
+                        <div class="param-row">
+                            <input type="checkbox" checked>
+                            <input type="text" value="barcode" class="param-key" readonly>
+                            <input type="text" value="6009612470014" class="param-value">
+                            <span class="param-description"></span>
+                        </div>
+                        <div class="param-row">
+                            <input type="checkbox" checked>
+                            <input type="text" value="currentPage" class="param-key" readonly>
+                            <input type="text" value="0" class="param-value">
+                            <span class="param-description"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Response Panel -->
+                <div class="response-panel">
+                    <div class="response-tabs">
+                        <button class="response-tab active">Body</button>
+                        <button class="response-tab">Cookies</button>
+                        <button class="response-tab">Headers <span class="tab-count">(12)</span></button>
+                        <button class="response-tab">Test Results</button>
+                        <button class="response-tab">⏱</button>
+                    </div>
+
+                    <div class="response-status">
+                        <span class="status-code success">200 OK</span>
+                        <span class="response-time">5.67 s</span>
+                        <span class="response-size">9.63 kB</span>
+                        <div class="response-actions">
+                            <button class="response-action"><i class="fas fa-copy"></i></button>
+                            <button class="response-action"><i class="fas fa-save"></i> Save Response</button>
+                            <button class="response-action"><i class="fas fa-ellipsis-h"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="response-content">
+                        <div class="response-header">
+                            <select class="response-format">
+                                <option>JSON</option>
+                            </select>
+                            <button class="response-action"><i class="fas fa-expand"></i> Preview</button>
+                            <button class="response-action"><i class="fas fa-table"></i> Visualize</button>
+                            <div class="response-tools">
+                                <button><i class="fas fa-search"></i></button>
+                                <button><i class="fas fa-copy"></i></button>
+                                <button><i class="fas fa-link"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="json-viewer">
+                            <div class="json-line"><span class="line-number">1</span><span class="json-bracket">{</span></div>
+                            <div class="json-line"><span class="line-number">2</span>  <span class="json-key">"type"</span>: <span class="json-string">"Ok"</span>,</div>
+                            <div class="json-line"><span class="line-number">3</span>  <span class="json-key">"status"</span>: <span class="json-number">200</span>,</div>
+                            <div class="json-line"><span class="line-number">4</span>  <span class="json-key">"title"</span>: <span class="json-string">"Your request was successfully processed."</span>,</div>
+                            <div class="json-line"><span class="line-number">5</span>  <span class="json-key">"requestId"</span>: <span class="json-string">"e051c27d-3abd-429a-8c5e-d6951ed306b0"</span>,</div>
+                            <div class="json-line"><span class="line-number">6</span>  <span class="json-key">"serverTime"</span>: <span class="json-string">"06/Sep/2025:22:43:59 +0000"</span>,</div>
+                            <div class="json-line"><span class="line-number">7</span>  <span class="json-key">"response"</span>: <span class="json-bracket">{</span></div>
+                            <div class="json-line"><span class="line-number">8</span>    <span class="json-key">"products"</span>: <span class="json-bracket">[</span></div>
+                            <div class="json-line"><span class="line-number">9</span>      <span class="json-bracket">{</span></div>
+                            <div class="json-line"><span class="line-number">10</span>        <span class="json-key">"code"</span>: <span class="json-string">"10144356EA"</span>,</div>
+                            <div class="json-line"><span class="line-number">11</span>        <span class="json-key">"articleId"</span>: <span class="json-string">""</span>,</div>
+                            <div class="json-line"><span class="line-number">12</span>        <span class="json-key">"uom"</span>: <span class="json-string">"EA"</span>,</div>
+                            <div class="json-line"><span class="line-number">13</span>        <span class="json-key">"name"</span>: <span class="json-string">"aQuellé Natural Still Spring Water 1.5L"</span>,</div>
+                            <div class="json-line"><span class="line-number">14</span>        <span class="json-key">"description"</span>: <span class="json-string">"&lt;p&gt;Enjoy the exceptional taste of our natural spring water, drawn from an underground spring.&lt;/p&gt;"</span></div>
+                        </div>
+                    </div>
+                </div>
+            </main>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="/js/components.js"></script>
     <script src="/js/app.js"></script>
 </body>
 </html>
