@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-import { ChevronRight, ChevronDown, Folder, File, MoreHorizontal, Trash2, Edit } from 'lucide-react';
+import { ChevronRight, ChevronDown, Folder, File, MoreHorizontal, Trash2 } from 'lucide-react';
 import { useAppStore } from '../hooks/useAppStore';
-import { HTTP_METHODS } from '../types/index';
 
 function CollectionItem({ item, depth = 0 }) {
   const { 
-    collections,
     activeRequest,
     setActiveRequest,
     deleteItem,
@@ -13,7 +11,7 @@ function CollectionItem({ item, depth = 0 }) {
     createRequest
   } = useAppStore();
   
-  const [isExpanded, setIsExpanded] = useState(!item.collapsed);
+  const [isExpanded, setIsExpanded] = useState(true);
   const [showContextMenu, setShowContextMenu] = useState(false);
 
   const isFolder = item.type === 'folder';
@@ -33,25 +31,40 @@ function CollectionItem({ item, depth = 0 }) {
     setShowContextMenu(true);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (confirm(`Are you sure you want to delete "${item.name}"?`)) {
-      deleteItem(item.id);
+      try {
+        await deleteItem(item.id);
+      } catch (error) {
+        console.error('Failed to delete item:', error);
+        alert('Failed to delete item. Please try again.');
+      }
     }
     setShowContextMenu(false);
   };
 
-  const handleAddFolder = () => {
+  const handleAddFolder = async () => {
     const name = prompt('Enter folder name:');
     if (name?.trim()) {
-      createFolder(name.trim(), item.id);
+      try {
+        await createFolder(name.trim(), item.id);
+      } catch (error) {
+        console.error('Failed to create folder:', error);
+        alert('Failed to create folder. Please try again.');
+      }
     }
     setShowContextMenu(false);
   };
 
-  const handleAddRequest = () => {
+  const handleAddRequest = async () => {
     const name = prompt('Enter request name:');
     if (name?.trim()) {
-      createRequest(name.trim(), 'GET', '', item.id);
+      try {
+        await createRequest(name.trim(), 'GET', '', item.id);
+      } catch (error) {
+        console.error('Failed to create request:', error);
+        alert('Failed to create request. Please try again.');
+      }
     }
     setShowContextMenu(false);
   };

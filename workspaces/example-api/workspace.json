@@ -1,0 +1,11 @@
+{
+  "id": "example-api",
+  "name": "Example API",
+  "description": "Example workspace for API testing",
+  "variables": {
+    "base_url": "https://jsonplaceholder.typicode.com",
+    "api_key": "your-api-key-here"
+  },
+  "createdAt": "2025-09-06T12:21:00.000Z",
+  "updatedAt": "2025-09-06T12:21:00.000Z"
+}

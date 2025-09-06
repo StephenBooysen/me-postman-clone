@@ -83,23 +83,53 @@ function KeyValueEditor({ items, onChange, placeholder = { key: 'Key', value: 'V
 function RequestTabs({ request, onUpdate }) {
   const [activeTab, setActiveTab] = useState('params');
 
+  // Convert object to array format for KeyValueEditor
+  const objectToArray = (obj) => {
+    if (Array.isArray(obj)) return obj;
+    return Object.entries(obj || {}).map(([key, value]) => ({
+      key,
+      value,
+      enabled: true
+    }));
+  };
+
+  // Convert array format back to object
+  const arrayToObject = (arr) => {
+    if (!Array.isArray(arr)) return arr;
+    const obj = {};
+    arr.filter(item => item.enabled && item.key).forEach(item => {
+      obj[item.key] = item.value || '';
+    });
+    return obj;
+  };
+
+  const paramsArray = objectToArray(request.params);
+  const headersArray = objectToArray(request.headers);
+  
+  // Ensure body is in the expected format
+  const requestBody = typeof request.body === 'string' 
+    ? { type: request.body ? 'raw' : 'none', content: request.body || '' }
+    : request.body || { type: 'none', content: '' };
+
   const tabs = [
-    { id: 'params', label: 'Params', count: request.params?.length || 0 },
-    { id: 'headers', label: 'Headers', count: request.headers?.length || 0 },
+    { id: 'params', label: 'Params', count: paramsArray.length },
+    { id: 'headers', label: 'Headers', count: headersArray.length },
     { id: 'body', label: 'Body', show: ['POST', 'PUT', 'PATCH'].includes(request.method) },
     { id: 'variables', label: 'Variables' }
   ];
 
-  const handleUpdateParams = (params) => {
+  const handleUpdateParams = (paramsArray) => {
+    const params = arrayToObject(paramsArray);
     onUpdate({ params });
   };
 
-  const handleUpdateHeaders = (headers) => {
+  const handleUpdateHeaders = (headersArray) => {
+    const headers = arrayToObject(headersArray);
     onUpdate({ headers });
   };
 
   const handleUpdateBody = (updates) => {
-    onUpdate({ body: { ...request.body, ...updates } });
+    onUpdate({ body: { ...requestBody, ...updates } });
   };
 
   return (
@@ -136,7 +166,7 @@ function RequestTabs({ request, onUpdate }) {
           <div>
             <h3 className="text-sm font-medium text-gray-700 mb-3">Query Parameters</h3>
             <KeyValueEditor
-              items={request.params || []}
+              items={paramsArray}
               onChange={handleUpdateParams}
               placeholder={{ key: 'Parameter', value: 'Value' }}
             />
@@ -147,7 +177,7 @@ function RequestTabs({ request, onUpdate }) {
           <div>
             <h3 className="text-sm font-medium text-gray-700 mb-3">Headers</h3>
             <KeyValueEditor
-              items={request.headers || []}
+              items={headersArray}
               onChange={handleUpdateHeaders}
               placeholder={{ key: 'Header', value: 'Value' }}
             />
@@ -166,7 +196,7 @@ function RequestTabs({ request, onUpdate }) {
                     key={type}
                     onClick={() => handleUpdateBody({ type })}
                     className={`px-3 py-1 text-sm rounded-md transition-colors ${
-                      request.body.type === type
+                      requestBody.type === type
                         ? 'bg-primary-100 text-primary-700 border border-primary-300'
                         : 'bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-200'
                     }`}
@@ -178,12 +208,12 @@ function RequestTabs({ request, onUpdate }) {
             </div>
 
             {/* Body Content */}
-            {request.body.type !== 'none' && (
+            {requestBody.type !== 'none' && (
               <textarea
-                value={request.body.content || ''}
+                value={requestBody.content || ''}
                 onChange={(e) => handleUpdateBody({ content: e.target.value })}
                 placeholder={
-                  request.body.type === 'json'
+                  requestBody.type === 'json'
                     ? '{\n  "key": "value"\n}'
                     : 'Enter request body...'
                 }

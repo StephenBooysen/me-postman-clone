@@ -13,18 +13,28 @@ function WorkspaceSelector() {
   
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleCreateWorkspace = () => {
+  const handleCreateWorkspace = async () => {
     const name = prompt('Enter workspace name:');
     if (name?.trim()) {
       const description = prompt('Enter workspace description (optional):') || '';
-      const newWorkspace = createWorkspace(name.trim(), description);
-      setActiveWorkspace(newWorkspace.id);
+      try {
+        const newWorkspace = await createWorkspace(name.trim(), description);
+        await setActiveWorkspace(newWorkspace.id);
+      } catch (error) {
+        console.error('Failed to create workspace:', error);
+        alert('Failed to create workspace. Please try again.');
+      }
     }
     setIsOpen(false);
   };
 
-  const handleSelectWorkspace = (workspaceId) => {
-    setActiveWorkspace(workspaceId);
+  const handleSelectWorkspace = async (workspaceId) => {
+    try {
+      await setActiveWorkspace(workspaceId);
+    } catch (error) {
+      console.error('Failed to switch workspace:', error);
+      alert('Failed to switch workspace. Please try again.');
+    }
     setIsOpen(false);
   };
 

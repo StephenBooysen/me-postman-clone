@@ -1,4 +1,15 @@
 import { createWorkspace, createFolder, createRequest } from '../types/index.js';
+import { 
+  loadWorkspaces, 
+  loadCollections, 
+  createWorkspaceOnDisk, 
+  updateWorkspaceOnDisk,
+  createFolderOnDisk,
+  createRequestOnDisk,
+  updateRequestOnDisk,
+  deleteItemFromDisk,
+  getItemParentPath
+} from '../utils/fileSystemAPI.js';
 
 class AppStore {
   constructor() {
@@ -8,15 +19,41 @@ class AppStore {
     this.activeRequest = null;
     this.variables = new Map(); // global variables
     this.listeners = new Set();
+    this.initialized = false;
     
-    // Initialize with default workspace
-    this.initializeDefaultWorkspace();
+    // Initialize from file system
+    this.initializeFromFileSystem();
+  }
+
+  async initializeFromFileSystem() {
+    try {
+      // Load workspaces from file system
+      const workspaces = await loadWorkspaces();
+      this.workspaces = workspaces;
+      
+      // Set default workspace as active
+      this.activeWorkspace = 'default';
+      
+      // Load collections for the active workspace
+      if (this.activeWorkspace) {
+        const collections = await loadCollections(this.activeWorkspace);
+        this.collections = collections;
+      }
+      
+      this.initialized = true;
+      this.notify();
+    } catch (error) {
+      console.error('Failed to initialize from file system:', error);
+      // Fallback to memory-only mode
+      this.initializeDefaultWorkspace();
+    }
   }
 
   initializeDefaultWorkspace() {
     const defaultWorkspace = createWorkspace('default', 'My Workspace', 'Default workspace');
     this.workspaces.set('default', defaultWorkspace);
     this.activeWorkspace = 'default';
+    this.initialized = true;
   }
 
   // Event system
@@ -30,17 +67,37 @@ class AppStore {
   }
 
   // Workspace methods
-  createWorkspace(name, description = '') {
+  async createWorkspace(name, description = '') {
     const id = `ws_${Date.now()}`;
-    const workspace = createWorkspace(id, name, description);
-    this.workspaces.set(id, workspace);
-    this.notify();
-    return workspace;
+    try {
+      const workspace = await createWorkspaceOnDisk(id, name, description);
+      this.workspaces.set(id, workspace);
+      this.notify();
+      return workspace;
+    } catch (error) {
+      console.error('Failed to create workspace on disk:', error);
+      // Fallback to memory only
+      const workspace = createWorkspace(id, name, description);
+      this.workspaces.set(id, workspace);
+      this.notify();
+      return workspace;
+    }
   }
 
-  setActiveWorkspace(workspaceId) {
+  async setActiveWorkspace(workspaceId) {
     if (this.workspaces.has(workspaceId)) {
       this.activeWorkspace = workspaceId;
+      
+      // Load collections for the new workspace
+      try {
+        const collections = await loadCollections(workspaceId);
+        this.collections = collections;
+        this.activeRequest = null; // Clear active request when switching workspaces
+      } catch (error) {
+        console.error('Failed to load collections for workspace:', error);
+        this.collections = new Map();
+      }
+      
       this.notify();
     }
   }
@@ -50,26 +107,59 @@ class AppStore {
   }
 
   // Collection methods (folders and requests)
-  createFolder(name, parentId = null) {
-    const id = `folder_${Date.now()}`;
-    const folder = createFolder(id, name, parentId);
-    this.collections.set(id, folder);
-    this.notify();
-    return folder;
+  async createFolder(name, parentId = null) {
+    const id = `folder_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    try {
+      const parentPath = getItemParentPath(this.activeWorkspace, parentId);
+      const folderPath = await createFolderOnDisk(this.activeWorkspace, name, parentPath);
+      
+      const folder = createFolder(id, name, parentId);
+      folder.path = folderPath;
+      this.collections.set(id, folder);
+      this.notify();
+      return folder;
+    } catch (error) {
+      console.error('Failed to create folder on disk:', error);
+      // Fallback to memory only
+      const folder = createFolder(id, name, parentId);
+      this.collections.set(id, folder);
+      this.notify();
+      return folder;
+    }
   }
 
-  createRequest(name, method = 'GET', url = '', parentId = null) {
-    const id = `req_${Date.now()}`;
+  async createRequest(name, method = 'GET', url = '', parentId = null) {
+    const id = `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const request = createRequest(id, name, method, url, parentId);
-    this.collections.set(id, request);
-    this.notify();
-    return request;
+    
+    try {
+      const parentPath = getItemParentPath(this.activeWorkspace, parentId);
+      const requestPath = await createRequestOnDisk(this.activeWorkspace, request, parentPath);
+      
+      request.path = requestPath;
+      this.collections.set(id, request);
+      this.notify();
+      return request;
+    } catch (error) {
+      console.error('Failed to create request on disk:', error);
+      // Fallback to memory only
+      this.collections.set(id, request);
+      this.notify();
+      return request;
+    }
   }
 
-  updateRequest(id, updates) {
+  async updateRequest(id, updates) {
     const request = this.collections.get(id);
     if (request) {
       const updated = { ...request, ...updates, updatedAt: new Date().toISOString() };
+      
+      try {
+        await updateRequestOnDisk(updated);
+      } catch (error) {
+        console.error('Failed to update request on disk:', error);
+      }
+      
       this.collections.set(id, updated);
       this.notify();
       return updated;
@@ -77,20 +167,31 @@ class AppStore {
     return null;
   }
 
-  deleteItem(id) {
+  async deleteItem(id) {
     // Delete item and all its children
     const item = this.collections.get(id);
     if (!item) return false;
 
+    // Delete from disk if path exists
+    if (item.path) {
+      try {
+        await deleteItemFromDisk(item.path);
+      } catch (error) {
+        console.error('Failed to delete item from disk:', error);
+      }
+    }
+
     // Find all children
     const childIds = Array.from(this.collections.values())
-      .filter(item => item.parentId === id)
-      .map(item => item.id);
+      .filter(child => child.parentId === id)
+      .map(child => child.id);
 
     // Recursively delete children
-    childIds.forEach(childId => this.deleteItem(childId));
+    for (const childId of childIds) {
+      await this.deleteItem(childId);
+    }
 
-    // Delete the item itself
+    // Delete the item itself from memory
     this.collections.delete(id);
     
     // Clear active request if it was deleted
@@ -116,7 +217,6 @@ class AppStore {
   // Get collections organized in tree structure
   getCollectionTree() {
     const items = Array.from(this.collections.values());
-    const rootItems = items.filter(item => !item.parentId);
     
     const buildTree = (parentId = null) => {
       return items
@@ -137,10 +237,18 @@ class AppStore {
   }
 
   // Variable methods
-  setVariable(workspaceId, key, value) {
+  async setVariable(workspaceId, key, value) {
     const workspace = this.workspaces.get(workspaceId);
     if (workspace) {
       workspace.variables[key] = value;
+      workspace.updatedAt = new Date().toISOString();
+      
+      try {
+        await updateWorkspaceOnDisk(workspace);
+      } catch (error) {
+        console.error('Failed to update workspace variables on disk:', error);
+      }
+      
       this.notify();
     }
   }

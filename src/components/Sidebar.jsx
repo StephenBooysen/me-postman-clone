@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Folder, File, ChevronRight, ChevronDown, MoreHorizontal, Settings } from 'lucide-react';
+import { Plus, Folder, File, Settings } from 'lucide-react';
 import { useAppStore } from '../hooks/useAppStore';
 import WorkspaceSelector from './WorkspaceSelector';
 import CollectionTree from './CollectionTree';
@@ -13,18 +13,28 @@ function Sidebar() {
   
   const [showCreateMenu, setShowCreateMenu] = useState(false);
 
-  const handleCreateFolder = () => {
+  const handleCreateFolder = async () => {
     const name = prompt('Enter folder name:');
     if (name?.trim()) {
-      createFolder(name.trim());
+      try {
+        await createFolder(name.trim());
+      } catch (error) {
+        console.error('Failed to create folder:', error);
+        alert('Failed to create folder. Please try again.');
+      }
     }
     setShowCreateMenu(false);
   };
 
-  const handleCreateRequest = () => {
+  const handleCreateRequest = async () => {
     const name = prompt('Enter request name:');
     if (name?.trim()) {
-      createRequest(name.trim());
+      try {
+        await createRequest(name.trim());
+      } catch (error) {
+        console.error('Failed to create request:', error);
+        alert('Failed to create request. Please try again.');
+      }
     }
     setShowCreateMenu(false);
   };

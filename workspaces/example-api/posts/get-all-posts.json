@@ -1,0 +1,13 @@
+{
+  "id": "req_get_all_posts", 
+  "name": "Get All Posts",
+  "method": "GET",
+  "url": "{{base_url}}/posts",
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "body": "",
+  "params": {},
+  "createdAt": "2025-09-06T12:21:00.000Z",
+  "updatedAt": "2025-09-06T12:21:00.000Z"
+}
