@@ -1,19 +1,22 @@
-import express from 'express';
-import cors from 'cors';
-import fs from 'fs/promises';
-import path from 'path';
-import { fileURLToPath } from 'url';
+const express = require('express');
+const cors = require('cors');
+const fs = require('fs/promises');
+const path = require('path');
+const ejs = require('ejs');
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = 3102;
 const WORKSPACES_DIR = path.join(__dirname, 'workspaces');
 
+// Set EJS as template engine
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Ensure workspaces directory exists
 async function ensureWorkspacesDir() {
@@ -311,12 +314,19 @@ app.delete('/api/items/:path', async (req, res) => {
   }
 });
 
+// Serve the main application
+app.get('/', (req, res) => {
+  res.render('index', {
+    title: 'Postman Clone'
+  });
+});
+
 // Initialize and start server
 async function startServer() {
   await ensureWorkspacesDir();
   
   app.listen(PORT, () => {
-    console.log(`🚀 File System API Server running on http://localhost:${PORT}`);
+    console.log(`🚀 Postman Clone Server running on http://localhost:${PORT}`);
     console.log(`📁 Workspaces directory: ${WORKSPACES_DIR}`);
   });
 }

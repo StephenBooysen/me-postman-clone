@@ -1,0 +1,48 @@
+<div id="workspace-selector-container"></div>
+
+<script>
+// Initialize the workspace selector when the page loads
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('workspace-selector-container');
+    if (container && window.createButton) {
+        // Create workspace selector button
+        const button = window.createButton({
+            text: '<div class="flex items-center justify-between w-full"><div class="flex items-center space-x-2"><i class="fi fi-rr-briefcase"></i><span id="current-workspace-name">Select Workspace</span></div><i id="workspace-chevron" class="fi fi-rr-angle-small-down transition-transform"></i></div>',
+            variant: 'outline',
+            className: 'w-full justify-between p-2 bg-muted hover:bg-accent transition-all',
+            onClick: () => toggleWorkspaceSelector()
+        });
+        
+        // Create dropdown content
+        const dropdown = document.createElement('div');
+        dropdown.id = 'workspace-dropdown';
+        dropdown.className = 'hidden absolute top-full left-0 right-0 mt-1 bg-popover border rounded-md shadow-lg z-20 max-h-64 overflow-auto animate-slide-down';
+        
+        const dropdownList = document.createElement('div');
+        dropdownList.id = 'workspace-list';
+        dropdownList.className = 'py-1';
+        
+        const separator = document.createElement('div');
+        separator.className = 'border-t';
+        
+        const createButton = window.createButton({
+            text: '<div class="flex items-center space-x-2"><i class="fi fi-rr-plus"></i><span>Create New Workspace</span></div>',
+            variant: 'ghost',
+            className: 'w-full justify-start px-3 py-2 text-sm text-primary',
+            onClick: () => createWorkspace()
+        });
+        
+        dropdown.appendChild(dropdownList);
+        dropdown.appendChild(separator);
+        dropdown.appendChild(createButton);
+        
+        // Create container with relative positioning
+        const selectorContainer = document.createElement('div');
+        selectorContainer.className = 'relative';
+        selectorContainer.appendChild(button);
+        selectorContainer.appendChild(dropdown);
+        
+        container.appendChild(selectorContainer);
+    }
+});
+</script>
