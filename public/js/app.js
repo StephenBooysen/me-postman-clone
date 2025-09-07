@@ -19,6 +19,9 @@ document.addEventListener('DOMContentLoaded', function() {
 // Initialize the application
 async function initializeApp() {
     try {
+        // Initialize theme system
+        initializeTheme();
+        
         // Load real workspace data
         await loadWorkspaces();
         
@@ -41,6 +44,12 @@ async function initializeApp() {
 
 // Setup event listeners
 function setupEventListeners() {
+    // Theme toggle button
+    const themeToggle = document.getElementById('theme-toggle');
+    if (themeToggle) {
+        themeToggle.addEventListener('click', toggleTheme);
+    }
+    
     // Send button
     const sendBtn = document.querySelector('.send-btn');
     if (sendBtn) {
@@ -51,7 +60,9 @@ function setupEventListeners() {
     const methodSelector = document.querySelector('.method-selector');
     if (methodSelector) {
         methodSelector.addEventListener('change', function() {
-            appState.currentRequest.method = this.value;
+            if (appState.currentRequest) {
+                appState.currentRequest.method = this.value;
+            }
         });
     }
     
@@ -59,8 +70,10 @@ function setupEventListeners() {
     const urlInput = document.querySelector('.url-input');
     if (urlInput) {
         urlInput.addEventListener('input', function() {
-            appState.currentRequest.url = this.value;
-            parseURLParams();
+            if (appState.currentRequest) {
+                appState.currentRequest.url = this.value;
+                parseURLParams();
+            }
         });
     }
     
@@ -68,8 +81,13 @@ function setupEventListeners() {
     document.querySelectorAll('.param-value').forEach(input => {
         input.addEventListener('input', function() {
             const paramName = this.closest('.param-row').querySelector('.param-key').value;
-            appState.currentRequest.params[paramName] = this.value;
-            updateURL();
+            if (appState.currentRequest) {
+                if (!appState.currentRequest.params) {
+                    appState.currentRequest.params = {};
+                }
+                appState.currentRequest.params[paramName] = this.value;
+                updateURL();
+            }
         });
     });
     
@@ -749,4 +767,50 @@ async function createNewRequest() {
         console.error('Failed to create request:', error);
         alert('Failed to create request');
     }
+}
+
+// Theme Management
+function initializeTheme() {
+    // Get saved theme from localStorage or default to dark
+    const savedTheme = localStorage.getItem('postman-clone-theme') || 'dark';
+    
+    // Apply the theme
+    setTheme(savedTheme);
+    
+    console.log('Theme initialized:', savedTheme);
+}
+
+function setTheme(theme) {
+    const html = document.documentElement;
+    const themeIcon = document.getElementById('theme-icon');
+    
+    if (theme === 'light') {
+        html.setAttribute('data-theme', 'light');
+        if (themeIcon) {
+            themeIcon.className = 'fas fa-moon';
+        }
+    } else {
+        html.removeAttribute('data-theme');
+        if (themeIcon) {
+            themeIcon.className = 'fas fa-sun';
+        }
+    }
+    
+    // Store in localStorage
+    localStorage.setItem('postman-clone-theme', theme);
+}
+
+function toggleTheme() {
+    const html = document.documentElement;
+    const currentTheme = html.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    
+    setTheme(newTheme);
+    
+    console.log('Theme toggled to:', newTheme);
+}
+
+function getCurrentTheme() {
+    const html = document.documentElement;
+    return html.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
 }
